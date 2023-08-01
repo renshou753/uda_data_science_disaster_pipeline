@@ -1,5 +1,5 @@
 {% for result in results %}
-    <tr {% if loop.last %} hx-get="get-next-rows?offset={{ offset }}" hx-trigger="revealed" hx-swap="afterend" {% endif %}>
+    <tr {% if loop.last %} hx-get="get-next-rows?offset={{ offset }}&search_msg={{ search_msg }}" hx-trigger="revealed" hx-swap="afterend" {% endif %}>
         <td>{{ result.message }}</td>
         <td>{{ result.genre }}</td>
     </tr>

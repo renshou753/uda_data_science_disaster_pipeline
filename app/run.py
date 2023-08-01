@@ -78,15 +78,30 @@ def go():
 # web page that render the raw table data from db
 @app.route('/table')
 def display_table():
-    # render pandas df on html
+    # render pandas df on dict records
     results = df_message[:25].to_dict('records')
     return render_template('table.html', results=results, titles=['message', 'genre'])
+
+# web page that search the raw table data from db
+@app.route('/search_table')
+def search_table():
+    # save user input in query
+    query = request.args.get('query', '') 
+    df = df_message[df_message.message.str.contains('{}'.format(query))]
+    # render pandas to dict records
+    results = df[:25].to_dict('records')
+    return render_template('search_table.html', results=results, titles=['message', 'genre'], search_msg=query)
 
 @app.route('/get-next-rows')
 def get_next_rows():
     offset = int(request.args['offset']) if 'offset' in request.args else 0
-    results = df_message[offset:offset+25].to_dict('records')
-    return render_template('table_rows.html', results=results, offset=offset+25)
+    search_msg = request.args['search_msg'] if 'search_msg' in request.args else ''
+    if len(search_msg) > 0:
+        df = df_message[df_message.message.str.contains('{}'.format(search_msg))][offset:offset+25]
+    else:
+        df = df_message[offset:offset+25]
+    results = df.to_dict('records')
+    return render_template('table_rows.html', results=results, offset=offset+25, search_msg=search_msg)
 
 def main():
     app.run(host='0.0.0.0', port=3001, debug=True)

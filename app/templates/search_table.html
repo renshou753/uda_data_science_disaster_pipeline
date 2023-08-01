@@ -1,0 +1,24 @@
+
+<div class="container">
+    <div id="search_results">
+        <table class="table">
+            <thead>
+                <tr>
+                    {% for title in titles %}
+                        <th>{{ title }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                    <tr {% if loop.last %} hx-get="get-next-rows?offset=25&search_msg={{ search_msg }}" hx-trigger="revealed" hx-swap="afterend" {% endif %}>
+                        <td>{{ result.message }}</td>
+                        <td>{{ result.genre }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+</div>
