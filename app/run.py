@@ -4,7 +4,8 @@ import pandas as pd
 import joblib
 
 from flask import Flask, render_template, request, jsonify
-from plotly.graph_objs import Bar
+from plotly.graph_objs import Bar, Pie
+from pandas_profiling import ProfileReport
 
 from extensions import engine
 from utility import tokenize
@@ -23,10 +24,16 @@ model_message = joblib.load("../models/classifier.pkl")
 def index():
     
     # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
     genre_counts = df_message.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
-    
+
+    category_names = df_message.iloc[:, 4:].columns
+    category_counts = (df_message.iloc[:, 4:]!=0).sum()
+
+    df_news = df_message[df_message['genre'] == 'news']
+    news_category_names = df_news.iloc[:, 4:].columns
+    news_category_counts = (df_news.iloc[:, 4:]!=0).sum()
+
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
     graphs = [
@@ -47,7 +54,45 @@ def index():
                     'title': "Genre"
                 }
             }
-        }
+        },
+
+        {
+            'data': [
+                Pie(
+                    labels=category_names,
+                    values=category_counts
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of Categories',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Category"
+                }
+            }
+        },
+
+        {
+            'data': [
+                Bar(
+                    x=news_category_names,
+                    y=news_category_counts
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of News Categories',
+                'yaxis': {
+                    'title': "News Category Count"
+                },
+                'xaxis': {
+                    'title': "Category"
+                }
+            }
+        },
     ]
     
     # encode plotly graphs in JSON
@@ -102,6 +147,10 @@ def get_next_rows():
         df = df_message[offset:offset+25]
     results = df.to_dict('records')
     return render_template('table_rows.html', results=results, offset=offset+25, search_msg=search_msg)
+
+@app.route('/profiling')
+def profiling():
+    return render_template('profiling.html')
 
 def main():
     app.run(host='0.0.0.0', port=3001, debug=True)
