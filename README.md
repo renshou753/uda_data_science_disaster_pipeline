@@ -17,29 +17,47 @@
 ### Project Structure
 
 - app
+
 | - template
+
 | |- base.html  # base template of web app
+
 | |- home.html  # home page of web app
+
 | |- profiling_message.html  # pandas profilimg result of message dataframe
+
 | |- profiling.html  # profiling page of web app
+
 | |- search_table.html  # search table page of web app
+
 | |- table_rows.html  # template page used by htmx to do infinite scrolling
+
 | |- go.html  # classification result page of web app
+
 |- run.py  # Flask file that runs app
+
 |- extensions.py  # Flask extensions
+
 |- utility.py  # utility function for web app
 
 - data
+
 |- disaster_categories.csv  # data to process 
+
 |- disaster_messages.csv  # data to process
+
 |- process_data.py
+
 |- InsertDatabaseName.db   # database to save clean data to
 
 - models
+
 |- train_classifier.py
+
 |- classifier.pkl  # saved model 
 
 - README.md
+
 - Requirements.txt  # python dependencies
 
 ### Flask app
